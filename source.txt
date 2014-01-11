@@ -14,8 +14,6 @@ Player 1 is invisible when not in sight from players)
 OBJECTS
 ========
 
-Background
-darkgray
 
 (crappy state definition for players taking turns)
 BackgroundSpy (B)
@@ -158,18 +156,6 @@ yellow blue black
 
 (cat)
 obj2
-(white red black
-.....
-010..
-11100
-01000
-.2.2.)
-(orange brown darkbrown
-0.0..
-111..
-111..
-22221
-2222.)
 orange brown darkgreen black
 0...0
 11111
@@ -254,7 +240,7 @@ darkgrey
 LEGEND
 =======
 . = BackgroundSpy
-back =  BackgroundSoldier or BackgroundSoldier2 or BackgroundSoldier3 or BackgroundSpy
+Background =  BackgroundSoldier or BackgroundSoldier2 or BackgroundSoldier3 or BackgroundSpy
 obj = obj1 or obj2 or obj3
 turn = turnspy or turnSoldier1 or turnSoldier2 or turnSoldier3
 wobj = wobj1 or wobj2 or wobj3
@@ -278,23 +264,23 @@ t = turnspy
 =========
 SOUNDS
 =========
-(Sfx0 42778708 (police car))
 sfx0 64723308 (cat)
 Sfx1 81300709 (birdsound for bird target)
 Sfx2 87489308 (Horse !!!)
 Sfx3 833702   (spy is dead)
 Sfx4 95210703 (spy wins)
 Sfx5 41014502 (spy hits wall)
+Sfx6 42778708 (player 1 spotted)
 
 ================
 COLLISIONLAYERS
 ================
-background
-back, x
-statemarker, objmarker, wincond, dop
+Background
+x, dop, wincond
+statemarker, objmarker
 turn, wallinpath, spysafe
-dopcreated, obj, wobj
-player, Crate, wall
+dopcreated
+player, Crate, wall, objective
 
 ======
 RULES
@@ -306,7 +292,6 @@ RULES
 (Action for creating doppelganger)
 [Action agent no dopcreated no objective BackgroundSpy] -> [agent dopcreated doppelganger BackgroundSpy]
 [Action agent dopcreated  BackgroundSpy] -> cancel
-[Action agent objective  BackgroundSpy] -> cancel
 ([no Player objmarker] -> [doppelganger])
 
 (first choose one random objective to make it target)
@@ -332,13 +317,13 @@ random[obj no x] -> [obj objmarker]
 (end of crappy rules to prevent players from acting when it is not their turn)
 
 (soldier can not go over obstacles)
-[> sold | objective] -> [sold | objective]
+([> sold | objective] -> [sold | objective])
 (actual game rules !)
 (push crates)
 [> Player | Crate] -> [> Player | > Crate]
 [> crate | Crate] -> [> crate | > Crate] 
 [> crate | dop] -> [crate | dop] 
-[> crate | objective] -> [crate | objective] 
+([> crate | objective] -> [crate | objective] )
 
 (sound to inform spy he hit a wall)
 [> agent BackgroundSpy | wall] -> Sfx5
@@ -348,7 +333,7 @@ random[obj no x] -> [obj objmarker]
 
 (win if objective reached / spy is dead)
 [> sold | agent] -> [sold | wincond] sfx3 message "player 2 wins!"
-[> agent | wobj] -> [> agent | wincond] Sfx4  message "player 1 wins!"
+[> agent | wobj] -> [ agent | wincond wobj ] Sfx4  message "player 1 wins!"
 
 [statemarker] -> []
 
@@ -388,25 +373,25 @@ late [spysafe] -> []
 
 late LEFT [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late RIGHT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late LEFT [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] SFX0
+late LEFT [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late DOWN [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late UP [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] SFX0
+late UP [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late UP [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late DOWN [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] SFX0
+late DOWN [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late LEFT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] SFX0
+late RIGHT [soldier | ... | agent no spysafe] -> [soldier | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 (end soldier)
@@ -438,25 +423,25 @@ late [spysafe] -> []
 
 late LEFT [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late RIGHT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late LEFT [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] SFX0
+late LEFT [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late DOWN [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late UP [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] SFX0
+late UP [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late UP [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late DOWN [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] SFX0
+late DOWN [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late LEFT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] SFX0
+late RIGHT [soldier2 | ... | agent no spysafe] -> [soldier2 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 (end soldier2)
@@ -488,31 +473,28 @@ late [spysafe] -> []
 
 late LEFT [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late RIGHT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late LEFT [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] SFX0
+late LEFT [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late DOWN [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late UP [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] SFX0
+late UP [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late UP [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late DOWN [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] SFX0
+late DOWN [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late LEFT [agent |...| Obstacle wallinpath] -> [agent spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] SFX0
+late RIGHT [soldier3 | ... | agent no spysafe] -> [soldier3 | ... | spyvisible] Sfx6
 late [wallinpath] -> []
 late [spysafe] -> []
 (end soldier3)
-
-(no idea why the x goes off ???
-late [obj no x] -> [obj x])
 
 (Player turn handling)
 	(turn marker)
@@ -525,7 +507,7 @@ late[statemarker] -> []
 	(end turn marker)
 
 	(marking states to only perform player turn switching once)
-late[back] -> [back statemarker]
+late[Background] -> [Background statemarker]
 late[BackgroundSpy statemarker] -> [BackgroundSoldier]
 late[BackgroundSoldier statemarker] -> [BackgroundSoldier2]
 late[BackgroundSoldier2 statemarker] -> [BackgroundSoldier3]
