@@ -4,9 +4,10 @@ homepage www.stevetonneau.fr
 
 color_palette gameboycolour
 
-(a port of a flash game of mine, the original of which can be played here:
-http://ded.increpare.com/~locus/kettle
-)
+(a 2-player infiltration game.
+player 1 is a spy and has to reach one objective only he knows of.
+player 2 controls 3 soldiers and must prevent him from reaching its objective.
+Player 1 is invisible when not in sight from players)
 
 
 ========
@@ -18,16 +19,16 @@ darkgray
 
 (crappy state definition for players taking turns)
 BackgroundSpy (B)
-red
+darkgray
 
 BackgroundSoldier (D)
-green
+darkgray
 
 BackgroundSoldier2 (F)
-yellow
+darkgray
 
 BackgroundSoldier3 (H)
-blue
+darkgray
 (end crappy state definition for players taking turns)
 
 (player 2 controls 3 soldiers in turn)
@@ -77,7 +78,7 @@ blue
 spy
 pink
 .....
-.....
+..0..
 .....
 .....
 .....
@@ -120,7 +121,7 @@ red
 
 (player 1 can create doppelganger)
 doppelganger
-pink
+black
 .....
 ..0..
 .....
@@ -146,59 +147,61 @@ blue
 .0.0.
 
 (I need 6 sprites to randomly chose one of three objectives)
+(bird)
 obj1
-red
-..0..
-00000
-..0..
-.000.
-.0.0.
+yellow blue black
+...0.
+..010
+0000.
+.00..
+.2...
 
-
+(ambulance)
 obj2
-yellow
-..0..
-00000
-..0..
-.000.
-.0.0.
+white red black
+.....
+010..
+11100
+01000
+.2.2.
 
-
+(horse)
 obj3
-pink
-..0..
-00000
-..0..
-.000.
+orange brown
+..111
+..100
+1000.
+1000.
 .0.0.
 
 
 (true objectives)
 wobj1
-red
-.....
-.....
-..0..
-.000.
-.0.0.
+yellow blue black
+...0.
+..010
+0000.
+.00..
+.2...
 
 
 wobj2
-yellow
+white red black
 .....
-.....
-..0..
-.000.
-.0.0.
+010..
+11100
+01000
+.2.2.
 
 
 wobj3
-pink
-.....
-.....
-..0..
-.000.
+orange brown
+..111
+..100
+1000.
+1000.
 .0.0.
+
 
 (temporary marker used for object selection)
 objmarker
@@ -212,11 +215,11 @@ black
 
 (marker for objective selected)
 x
-black
+darkgrey
 
 (wincond to overcome no bug with background)
 wincond
-black
+darkgray
 
 
 =======
@@ -250,23 +253,30 @@ SOUNDS
 Sfx0 42778708 (police car)
 Sfx1 81300709 (birdsound for bird target)
 Sfx2 87489308 (Horse !!!)
-
+Sfx3 833702   (spy is dead)
+Sfx4 95210703 (spy wins)
+Sfx5 41014502 (spy hits wall)
 
 ================
 COLLISIONLAYERS
 ================
 background
 statemarker
-back
 objmarker, x, wincond
-obj, wobj, 
-dop, player, Crate, wall, turn
+back, turn
+dop
+player, Crate, wall, obj, wobj
 
 ======
 RULES
 ======
 
 [wincond] -> win
+
+
+(Action for creating doppelganger)
+[Action agent  BackgroundSpy] -> [agent doppelganger BackgroundSpy]
+([no Player objmarker] -> [doppelganger])
 
 (first choose one random objective to make it target)
 (set other objectives as fake objectives)
@@ -275,49 +285,44 @@ random[obj no x] -> [obj objmarker]
 [obj1 no objmarker] -> [obj1 x]
 [obj2 no objmarker] -> [obj2 x]
 [obj3 no objmarker] -> [obj3 x]
-[obj1 objmarker] -> [wobj1] Sfx0
-[obj2 objmarker] -> [wobj2] Sfx1
+[obj1 objmarker] -> [wobj1] Sfx1
+[obj2 objmarker] -> [wobj2] Sfx0
 [obj3 objmarker] -> [wobj3] Sfx2
 
 
 (crappy rules to prevent players from acting when it is not their turn)
-[>  agent | BackgroundSoldier] ->  [ agent | BackgroundSoldier ]
-[>  agent | BackgroundSoldier2] -> [ agent | BackgroundSoldier2 ]
-[>  agent | BackgroundSoldier3] -> [ agent | BackgroundSoldier3 ]
+[> agent | BackgroundSoldier] -> [agent | BackgroundSoldier]
+[> agent | BackgroundSoldier2] -> [agent | BackgroundSoldier2]
+[> agent | BackgroundSoldier3] -> [agent | BackgroundSoldier3]
 
-[>  soldier | BackgroundSoldier2] -> [ soldier | BackgroundSoldier2 ]
-[>  soldier | BackgroundSoldier3] -> [ soldier | BackgroundSoldier3 ]
-[>  soldier | BackgroundSpy] -> [ soldier | BackgroundSpy ]
+[> soldier | BackgroundSoldier2] -> [soldier | BackgroundSoldier2]
+[> soldier | BackgroundSoldier3] -> [soldier | BackgroundSoldier3]
+[> soldier | BackgroundSpy] -> [soldier | BackgroundSpy]
 
 
-[>  soldier2 | BackgroundSoldier] -> [ soldier2 | BackgroundSoldier ]
-[>  soldier2 | BackgroundSoldier3] -> [ soldier2 | BackgroundSoldier3 ]
-[>  soldier2 | BackgroundSpy] -> [ soldier2 | BackgroundSpy ]
+[> soldier2 | BackgroundSoldier] -> [soldier2 | BackgroundSoldier]
+[> soldier2 | BackgroundSoldier3] -> [soldier2 | BackgroundSoldier3]
+[> soldier2 | BackgroundSpy] -> [soldier2 | BackgroundSpy]
 
-[>  soldier3 | BackgroundSoldier2] -> [ soldier3 | BackgroundSoldier2 ]
-[>  soldier3 | BackgroundSoldier] -> [ soldier3 | BackgroundSoldier ]
-[>  soldier3 | BackgroundSpy] -> [ soldier3 | BackgroundSpy ]
+[> soldier3 | BackgroundSoldier2] -> [soldier3 | BackgroundSoldier2]
+[> soldier3 | BackgroundSoldier] -> [soldier3 | BackgroundSoldier]
+[> soldier3 | BackgroundSpy] -> [soldier3 | BackgroundSpy]
 (end of crappy rules to prevent players from acting when it is not their turn)
 
 (actual game rules !)
 (push crates)
-[>  Player | Crate] -> [ >  Player | > Crate ]
-[>  crate | Crate] -> [ >  crate | > Crate] 
+[> Player | Crate] -> [> Player | > Crate]
+[> crate | Crate] -> [> crate | > Crate] 
 
-(soldier can not go on objective)
-[>  sold | obj] -> [  sold |  obj ]
-[>  sold | wobj] -> [  sold |  wobj ]
+(sound to inform spy he hit a wall)
+[> agent BackgroundSpy | wall] -> Sfx5
 
 (soldier kills doppelganger by walking on it)
-[>  sold | dop] ->  [>   sold |  ]
+[> sold | dop] -> [> sold | ]
 
-(win if objective reach / spy is dead)
-[>  sold | agent] -> [  sold |  wincond ] message "player 2 wins!"
-[> agent | wobj] -> [> agent | wincond]  message "player 1 wins!"
-
-(Action for creating doppelganger)
-[Action agent  BackgroundSpy] -> [agent objmarker BackgroundSpy]
-[no Player objmarker] -> [doppelganger]
+(win if objective reached / spy is dead)
+[> sold | agent] -> [sold | wincond] sfx3 message "player 2 wins!"
+[> agent | wobj] -> [> agent | wincond] Sfx4  message "player 1 wins!"
 
 (Spy detection)
 late[spyalmostvisible] -> [spy] 
