@@ -1,6 +1,6 @@
 title wooden raw liquid
 author Steve Tonneau
-homepage www.increpare.com
+homepage www.stevetonneau.fr
 
 color_palette gameboycolour
 
@@ -14,66 +14,21 @@ OBJECTS
 ========
 
 Background
-darkgray white
-.....
-.000.
-.0.0.
-.000.
-.....
-(crappy state definition for players taking turns)
-BackgroundSpyB (A)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-BackgroundSpy (B)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-
-BackgroundSoldierB (C)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-BackgroundSoldier (D)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-BackgroundSoldier2B (E)
 darkgray
-BackgroundSoldier2 (F)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-BackgroundSoldier3B (G)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
-BackgroundSoldier3 (H)
-white white
-.....
-.000.
-.0.0.
-.000.
-.....
+
 (crappy state definition for players taking turns)
+BackgroundSpy (B)
+red
+
+BackgroundSoldier (D)
+green
+
+BackgroundSoldier2 (F)
+yellow
+
+BackgroundSoldier3 (H)
+blue
+(end crappy state definition for players taking turns)
 
 (player 2 controls 3 soldiers in turn)
 soldier
@@ -126,8 +81,10 @@ pink
 .....
 .....
 .....
-
 (end player 1)
+
+
+(turn marker)
 turnSoldier1
 green
 .000.
@@ -159,13 +116,18 @@ red
 00000
 .000.
 .0.0.
-(turn marker)
-
-
 (end turn marker)
 
 (player 1 can create doppelganger)
 doppelganger
+pink
+.....
+..0..
+.....
+.....
+.....
+
+doppelgangervisible
 red
 .000.
 .000.
@@ -173,13 +135,6 @@ red
 .000.
 .0.0.
 
-doppelgangerinvisible
-pink
-.....
-..0..
-.....
-.....
-.....
 
 (Crates can be pushed by anybody)
 Crate
@@ -190,7 +145,7 @@ blue
 .000.
 .0.0.
 
-(I need 9 sprites to randomly chose one of three objectives)
+(I need 6 sprites to randomly chose one of three objectives)
 obj1
 red
 ..0..
@@ -249,14 +204,17 @@ pink
 objmarker
 darkgray
 
+statemarker
+darkgray
+
 wall
 black
 
-(marker for objective slected)
+(marker for objective selected)
 x
 black
 
-(marker for objective slected)
+(wincond to overcome no bug with background)
 wincond
 black
 
@@ -265,20 +223,20 @@ black
 LEGEND
 =======
 ; = background
-. = BackgroundSpyB
+. = BackgroundSpy
+back =  BackgroundSoldier or BackgroundSoldier2 or BackgroundSoldier3 or BackgroundSpy
 obj = obj1 or obj2 or obj3
 turn = turnspy or turnSoldier1 or turnSoldier2 or turnSoldier3
 wobj = wobj1 or wobj2 or wobj3
 player = soldier or soldier2 or soldier3 or spy or spyvisible or spyalmostvisible
 agent = spy or spyvisible or spyalmostvisible
-dop = doppelganger or  doppelgangerinvisible
+dop = doppelganger or  doppelgangervisible
 sold = soldier or soldier2 or soldier3
 Obstacle = player
 s = soldier
 d = soldier2
 f = soldier3
 h = spyvisible
-a = doppelgangerinvisible 
 i = obj1
 o = obj2
 p = obj3
@@ -298,7 +256,8 @@ Sfx2 87489308 (Horse !!!)
 COLLISIONLAYERS
 ================
 background
-BackgroundSpy, BackgroundSpyB, BackgroundSoldierB, BackgroundSoldier2B, BackgroundSoldier3B, BackgroundSoldier, BackgroundSoldier2, BackgroundSoldier3,
+statemarker
+back
 objmarker, x, wincond
 obj, wobj, 
 dop, player, Crate, wall, turn
@@ -312,71 +271,80 @@ RULES
 (first choose one random objective to make it target)
 (set other objectives as fake objectives)
 (remove marker from objective and make it real)
-random[ obj no x ] -> [obj objmarker]
-[obj1 no objmarker] -> [ obj1 x]
-[obj2 no objmarker] -> [ obj2 x]
-[obj3 no objmarker] -> [ obj3 x]
-[obj1 objmarker] -> [ wobj1] Sfx0
-[obj2 objmarker] -> [ wobj2] Sfx1
-[obj3 objmarker] -> [ wobj3] Sfx2
+random[obj no x] -> [obj objmarker]
+[obj1 no objmarker] -> [obj1 x]
+[obj2 no objmarker] -> [obj2 x]
+[obj3 no objmarker] -> [obj3 x]
+[obj1 objmarker] -> [wobj1] Sfx0
+[obj2 objmarker] -> [wobj2] Sfx1
+[obj3 objmarker] -> [wobj3] Sfx2
 
 
-(crappy states to prevent players from acting when it is not their turn)
-[ background ] -> [ BackgroundSpyB ]
-[ BackgroundSpy ] -> [ BackgroundSoldierB ](B->C)
-[ BackgroundSoldier ] -> [ BackgroundSoldier2B ](D->E)
-[ BackgroundSoldier2 ] -> [ BackgroundSoldier3B ](F->G)
-[ BackgroundSoldier3 ] -> [ BackgroundSpyB ](H->A)
-[ BackgroundSpyB ] -> [ BackgroundSpy ](A->B)
-[ BackgroundSoldierB ] -> [ BackgroundSoldier ](C->D)
-[ BackgroundSoldier2B ] -> [ BackgroundSoldier2 ](E->F)
-[ BackgroundSoldier3B ] -> [ BackgroundSoldier3 ](G->H)
+(crappy rules to prevent players from acting when it is not their turn)
+[>  agent | BackgroundSoldier] ->  [ agent | BackgroundSoldier ]
+[>  agent | BackgroundSoldier2] -> [ agent | BackgroundSoldier2 ]
+[>  agent | BackgroundSoldier3] -> [ agent | BackgroundSoldier3 ]
 
-[ >  agent | BackgroundSoldier ] ->  [  agent | BackgroundSoldier  ]
-[ >  agent | BackgroundSoldier2 ] -> [  agent | BackgroundSoldier2  ]
-[ >  agent | BackgroundSoldier3 ] -> [  agent | BackgroundSoldier3  ]
-
-[ >  soldier | BackgroundSoldier2 ] -> [  soldier | BackgroundSoldier2  ]
-[ >  soldier | BackgroundSoldier3 ] -> [  soldier | BackgroundSoldier3  ]
-[ >  soldier | BackgroundSpy ] -> [  soldier | BackgroundSpy  ]
+[>  soldier | BackgroundSoldier2] -> [ soldier | BackgroundSoldier2 ]
+[>  soldier | BackgroundSoldier3] -> [ soldier | BackgroundSoldier3 ]
+[>  soldier | BackgroundSpy] -> [ soldier | BackgroundSpy ]
 
 
-[ >  soldier2 | BackgroundSoldier ] -> [  soldier2 | BackgroundSoldier  ]
-[ >  soldier2 | BackgroundSoldier3 ] -> [  soldier2 | BackgroundSoldier3  ]
-[ >  soldier2 | BackgroundSpy ] -> [  soldier2 | BackgroundSpy  ]
+[>  soldier2 | BackgroundSoldier] -> [ soldier2 | BackgroundSoldier ]
+[>  soldier2 | BackgroundSoldier3] -> [ soldier2 | BackgroundSoldier3 ]
+[>  soldier2 | BackgroundSpy] -> [ soldier2 | BackgroundSpy ]
 
-[ >  soldier3 | BackgroundSoldier2 ] -> [  soldier3 | BackgroundSoldier2  ]
-[ >  soldier3 | BackgroundSoldier ] -> [  soldier3 | BackgroundSoldier  ]
-[ >  soldier3 | BackgroundSpy ] -> [  soldier3 | BackgroundSpy  ]
-(end of crappy states to prevent players from acting when it is not their turn)
+[>  soldier3 | BackgroundSoldier2] -> [ soldier3 | BackgroundSoldier2 ]
+[>  soldier3 | BackgroundSoldier] -> [ soldier3 | BackgroundSoldier ]
+[>  soldier3 | BackgroundSpy] -> [ soldier3 | BackgroundSpy ]
+(end of crappy rules to prevent players from acting when it is not their turn)
 
-[ >  Player | Crate ] -> [  >  Player | > Crate  ]
-[ >  crate | Crate ] -> [  >  crate | > Crate ] 
+(actual game rules !)
+(push crates)
+[>  Player | Crate] -> [ >  Player | > Crate ]
+[>  crate | Crate] -> [ >  crate | > Crate] 
 
-[ >  sold | obj ] -> [   sold |  obj  ]
-[ >  sold | wobj ] -> [   sold |  wobj  ]
-[ >  sold | dop ] ->  [ >   sold |   ]
-[ >  sold | agent ] -> [   sold |  wincond  ] message "player 2 wins!"
-[ > agent | wobj ] -> [> agent | wincond]  message "player 1 wins!"
+(soldier can not go on objective)
+[>  sold | obj] -> [  sold |  obj ]
+[>  sold | wobj] -> [  sold |  wobj ]
 
-(Action for getting objective, reusing objmarker due to sprite limit reached)
-[ Action agent  BackgroundSpy ] -> [ agent objmarker BackgroundSpy ]
-[ no Player objmarker] -> [doppelgangerinvisible]
+(soldier kills doppelganger by walking on it)
+[>  sold | dop] ->  [>   sold |  ]
 
-late[spyalmostvisible ] -> [spy ] 
-late[doppelganger ] -> [doppelgangerinvisible ]
-late[spyvisible ] -> [spyalmostvisible ] 
-late[sold | ... | spy ] -> [sold | ... | spyvisible ] 
-late[sold | ... | spyalmostvisible ] -> [sold | ... | spyvisible ]
-late[sold | ... | doppelgangerinvisible ] -> [sold | ... | doppelganger ] 
+(win if objective reach / spy is dead)
+[>  sold | agent] -> [  sold |  wincond ] message "player 2 wins!"
+[> agent | wobj] -> [> agent | wincond]  message "player 1 wins!"
 
+(Action for creating doppelganger)
+[Action agent  BackgroundSpy] -> [agent objmarker BackgroundSpy]
+[no Player objmarker] -> [doppelganger]
 
-(turn marker)
-late[turnspy BackgroundSpy] -> [turnSoldier1 BackgroundSpy]
-late[turnSoldier1 BackgroundSoldier] -> [turnSoldier2 BackgroundSoldier]
-late[turnSoldier2 BackgroundSoldier2] -> [turnSoldier3 BackgroundSoldier2]
-late[turnSoldier3 BackgroundSoldier3] -> [turnspy BackgroundSoldier3]
-(end turn marker)
+(Spy detection)
+late[spyalmostvisible] -> [spy] 
+late[spyvisible] -> [spyalmostvisible] 
+late[doppelgangervisible] -> [doppelganger]
+late[sold | ... | spy] -> [sold | ... | spyvisible] 
+late[sold | ... | spyalmostvisible] -> [sold | ... | spyvisible]
+late[sold | ... | doppelganger] -> [sold | ... | doppelgangervisible] 
+
+(Player turn handling)
+	(turn marker)
+late[turn] -> [turn statemarker]
+late[turnspy statemarker] -> [turnSoldier1]
+late[turnSoldier1 statemarker] -> [turnSoldier2]
+late[turnSoldier2 statemarker] -> [turnSoldier3]
+late[turnSoldier3 statemarker] -> [turnspy]
+late[statemarker] -> []
+	(end turn marker)
+
+	(marking states to only perform player turn switching once)
+late[back] -> [back statemarker]
+late[BackgroundSpy statemarker] -> [BackgroundSoldier]
+late[BackgroundSoldier statemarker] -> [BackgroundSoldier2]
+late[BackgroundSoldier2 statemarker] -> [BackgroundSoldier3]
+late[BackgroundSoldier3 statemarker] -> [BackgroundSpy]
+late[statemarker] -> []
+(end Player turn  handling)
 ==============
 WINCONDITIONS
 ==============
@@ -391,7 +359,7 @@ LEVELS
 #....c.......#
 #..f....s..#
 #.......c...#
-#....#.a..h..#
+#....#....h..#
 #.p..........#
 #...c.........#
 #.......o.....#
