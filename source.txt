@@ -2,7 +2,7 @@ title pet theft
 author Steve Tonneau
 homepage www.stevetonneau.fr
 
-color_palette gameboycolour
+(color_palette c64)
 
 (a 2-player infiltration game.
 player 1 is a spy and has to reach one objective only he knows of.
@@ -17,16 +17,40 @@ OBJECTS
 
 (crappy state definition for players taking turns)
 BackgroundSpy (B)
-darkgray
+(#669966 darkblue darkgrey)
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 BackgroundSoldier (D)
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
+
 
 BackgroundSoldier2 (F)
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
+
 
 BackgroundSoldier3 (H)
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
+
 (end crappy state definition for players taking turns)
 
 (player 2 controls 3 soldiers in turn)
@@ -138,11 +162,11 @@ red
 (Crates can be pushed by anybody)
 Crate
 darkbrown brown
-00000
-01110
-01110
-01110
-00000
+.....
+0000.
+0110.
+0110.
+0000.
 
 (I need 6 sprites to randomly chose one of three objectives)
 (bird)
@@ -208,32 +232,66 @@ orange brown
 
 (temporary marker used for object selection)
 objmarker
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 statemarker
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 (doppelganger can only be created once)
 dopcreated
 blue
 
 wall
-black
-
+#cccccc grey
+11011
+01000
+01111
+01001
+01011
 (marker for objective selected)
 x
-darkgrey
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 (wincond to overcome no bug with background)
 wincond
-darkgray
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 (vision markers)
 wallinpath
-darkgrey
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 
 spysafe
-darkgrey
+darkblue darkgreen darkgrey
+11111
+00001
+00201
+00001
+00001
 (end vision markers)
 
 =======
@@ -523,7 +581,7 @@ Some wincond
 LEVELS
 =======
 
-################t
+##############t
 #.i...........#
 #.......d.....#
 #....c.......#
