@@ -9,6 +9,7 @@ player 1 is a spy and has to reach one objective only he knows of.
 player 2 controls 3 soldiers and must prevent him from reaching its objective.
 Player 1 is invisible when not in sight from players)
 
+key_repeat_interval 1
 
 ========
 OBJECTS
@@ -89,21 +90,22 @@ red
 .0.0.
 
 
-spyalmostvisible
+(spyalmostvisible
 blue
 .000.
 .000.
 00000
 .000.
-.0.0.
+.0.0.)
 
 spy
-pink
-.....
-..0..
+black
 .....
 .....
 .....
+.....
+.....
+
 (end player 1)
 
 
@@ -145,7 +147,7 @@ red
 doppelganger
 black
 .....
-..0..
+.....
 .....
 .....
 .....
@@ -249,7 +251,12 @@ darkblue darkgreen darkgrey
 
 (doppelganger can only be created once)
 dopcreated
-blue
+black
+.....
+.....
+.....
+.....
+.....
 
 wall
 #cccccc grey
@@ -303,8 +310,8 @@ obj = obj1 or obj2 or obj3
 turn = turnspy or turnSoldier1 or turnSoldier2 or turnSoldier3
 wobj = wobj1 or wobj2 or wobj3
 objective = wobj or obj
-player = soldier or soldier2 or soldier3 or spy or spyvisible or spyalmostvisible
-agent = spy or spyvisible or spyalmostvisible
+player = soldier or soldier2 or soldier3 or spy or spyvisible (or spyalmostvisible)
+agent = spy or spyvisible( or spyalmostvisible)
 dop = doppelganger or  doppelgangervisible
 sold = soldier or soldier2 or soldier3
 Obstacle = obj or wobj or crate or doppelganger or wall
@@ -322,7 +329,7 @@ t = turnspy
 =========
 SOUNDS
 =========
-sfx0 64723308 (cat)
+sfx7 64723308 (cat)
 Sfx1 81300709 (birdsound for bird target)
 Sfx2 87489308 (Horse !!!)
 Sfx3 833702   (spy is dead)
@@ -350,6 +357,7 @@ RULES
 (Action for creating doppelganger)
 [Action agent no dopcreated no objective BackgroundSpy] -> [agent dopcreated doppelganger BackgroundSpy]
 [Action agent dopcreated  BackgroundSpy] -> cancel
+[Action player no  BackgroundSpy] -> cancel
 ([no Player objmarker] -> [doppelganger])
 
 (first choose one random objective to make it target)
@@ -360,7 +368,7 @@ random[obj no x] -> [obj objmarker]
 [obj2 no objmarker] -> [obj2 x]
 [obj3 no objmarker] -> [obj3 x]
 [obj1 objmarker] -> [wobj1] Sfx1
-[obj2 objmarker] -> [wobj2] Sfx0
+[obj2 objmarker] -> [wobj2] Sfx7
 [obj3 objmarker] -> [wobj3] Sfx2
 
 
@@ -396,8 +404,9 @@ random[obj no x] -> [obj objmarker]
 [statemarker] -> []
 
 (Spy detection)
-late [spyalmostvisible] -> [spy] 
-late [spyvisible] -> [spyalmostvisible] 
+(late [spyalmostvisible] -> [spy] 
+late [spyvisible] -> [spyalmostvisible] )
+late [spyvisible] -> [spy]
 late [doppelgangervisible] -> [doppelganger]
 
 (marking obstacles in path as in the direction, then raycasting
@@ -407,25 +416,25 @@ from player in opposite direction. If no obstacle is tagged then the spy is visi
 (Soldier)
 late LEFT [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late RIGHT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late LEFT [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] SFX0
+late LEFT [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late DOWN [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late UP [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] SFX0
+late UP [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late UP [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late DOWN [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] SFX0
+late DOWN [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier |...| Obstacle no wallinpath] -> [soldier |...| Obstacle wallinpath]
 late LEFT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] SFX0
+late RIGHT [soldier | ... | dop no spysafe] -> [soldier | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
@@ -457,25 +466,25 @@ late [spysafe] -> []
 (Soldier2)
 late LEFT [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late RIGHT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late LEFT [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] SFX0
+late LEFT [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late DOWN [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late UP [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] SFX0
+late UP [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late UP [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late DOWN [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] SFX0
+late DOWN [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier2 |...| Obstacle no wallinpath] -> [soldier2 |...| Obstacle wallinpath]
 late LEFT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] SFX0
+late RIGHT [soldier2 | ... | dop no spysafe] -> [soldier2 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
@@ -507,25 +516,25 @@ late [spysafe] -> []
 (Soldier3)
 late LEFT [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late RIGHT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late LEFT [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] SFX0
+late LEFT [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late UP [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late DOWN [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late UP [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] SFX0
+late UP [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late DOWN [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late UP [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late DOWN [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] SFX0
+late DOWN [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
 late RIGHT [soldier3 |...| Obstacle no wallinpath] -> [soldier3 |...| Obstacle wallinpath]
 late LEFT [dop |...| Obstacle wallinpath] -> [dop spysafe |...| Obstacle wallinpath]
-late RIGHT [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] SFX0
+late RIGHT [soldier3 | ... | dop no spysafe] -> [soldier3 | ... | doppelgangervisible] 
 late [wallinpath] -> []
 late [spysafe] -> []
 
@@ -584,14 +593,15 @@ LEVELS
 ##############t
 #.i...........#
 #.......d.....#
-#....c.......#
-#..f....s..#
+#....c.......##
+#..f.......#
 #.......c...#
 #....#....h..#
-#.p..........#
+#.p........c.#
 #...c.........#
-#.......o.....#
+#.....so......#
 #.............#
 #.............#
 ###############
+
 
